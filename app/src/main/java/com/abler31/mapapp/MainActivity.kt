@@ -5,6 +5,7 @@ import android.location.GpsStatus
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.widget.ImageButton
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -27,14 +28,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.activity_main)
+        val zoomPlusButton = findViewById<ImageButton>(R.id.btn_zoom_plus)
+        val zoomMinusButton = findViewById<ImageButton>(R.id.btn_zoom_minus)
 
         mMap = findViewById(R.id.osmmap)
         mMap.setTileSource(TileSourceFactory.MAPNIK)
         mMap.mapCenter
         mMap.setMultiTouchControls(true)
         mMap.getLocalVisibleRect(Rect())
-
+        mMap.setBuiltInZoomControls(false);
         controller = mMap.controller
+
+        zoomPlusButton.setOnClickListener{
+            controller.zoomIn()
+        }
+
+        zoomMinusButton.setOnClickListener{
+            controller.zoomOut()
+        }
 
         val mapPoint = GeoPoint(55.7833, 49.1017)
 
