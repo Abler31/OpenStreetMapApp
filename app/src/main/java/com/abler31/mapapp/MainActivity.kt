@@ -63,18 +63,25 @@ class MainActivity : AppCompatActivity() {
 
         initMarkerList()
         markerList.forEach {
-            setMarker(it.geoPoint)
+            setMarker(it.name, it.track, it.date, it.time, it.geoPoint)
         }
     }
 
-    private fun setMarker(geoPoint: GeoPoint) {
+    private fun setMarker(
+        name: String,
+        track: String,
+        date: String,
+        time: String,
+        geoPoint: GeoPoint
+    ) {
         val marker = Marker(mMap)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, R.drawable.marker_icon)
         marker.title = "Test Marker"
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        marker.setOnMarkerClickListener{mark, mapView ->
-            Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
+        val bottomSheetFragment = BottomSheetFragment(name, track, date, time)
+        marker.setOnMarkerClickListener { mark, mapView ->
+            bottomSheetFragment.show(supportFragmentManager, "BottomSheetDialog")
             return@setOnMarkerClickListener true
         }
         mMap.overlays.add(marker)
@@ -100,12 +107,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initMarkerList(){
+    private fun initMarkerList() {
         var id = 0
         markerList = listOf(
-            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.77135008293359, 49.10390480122086)),
-            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.78025708036169, 49.116782610051025)),
-            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.79715863892295, 49.0988111057205))
+            MarkerModel(
+                id++,
+                "Илья",
+                "GPS",
+                "15.09.23",
+                "15:30",
+                GeoPoint(55.77135008293359, 49.10390480122086)
+            ),
+            MarkerModel(
+                id++,
+                "Илья",
+                "GPS",
+                "15.09.23",
+                "15:30",
+                GeoPoint(55.78025708036169, 49.116782610051025)
+            ),
+            MarkerModel(
+                id++,
+                "Илья",
+                "GPS",
+                "15.09.23",
+                "15:30",
+                GeoPoint(55.79715863892295, 49.0988111057205)
+            )
         )
     }
 }
