@@ -2,36 +2,28 @@ package com.abler31.mapapp
 
 import android.Manifest
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
-import android.location.GpsStatus
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.ImageButton
-import androidx.activity.result.contract.ActivityResultContract
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
-import org.osmdroid.events.MapListener
-import org.osmdroid.events.ScrollEvent
-import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainActivity : AppCompatActivity() {
     lateinit var mMap: MapView
     lateinit var controller: IMapController
+    lateinit var markerList: List<MarkerModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +61,10 @@ class MainActivity : AppCompatActivity() {
             getLocation(true)
         }
 
-        setMarker(GeoPoint(55.77135008293359, 49.10390480122086))
-        setMarker(GeoPoint(55.78025708036169, 49.116782610051025))
-        setMarker(GeoPoint(55.79715863892295, 49.0988111057205))
+        initMarkerList()
+        markerList.forEach {
+            setMarker(it.geoPoint)
+        }
     }
 
     private fun setMarker(geoPoint: GeoPoint) {
@@ -80,6 +73,10 @@ class MainActivity : AppCompatActivity() {
         marker.icon = ContextCompat.getDrawable(this, R.drawable.marker_icon)
         marker.title = "Test Marker"
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        marker.setOnMarkerClickListener{mark, mapView ->
+            Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
+            return@setOnMarkerClickListener true
+        }
         mMap.overlays.add(marker)
         mMap.invalidate()
     }
@@ -101,5 +98,14 @@ class MainActivity : AppCompatActivity() {
             mMap.controller.animateTo(myLocationOverlay.myLocation)
             mMap.controller.setZoom(15.5)
         }
+    }
+
+    private fun initMarkerList(){
+        var id = 0
+        markerList = listOf(
+            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.77135008293359, 49.10390480122086)),
+            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.78025708036169, 49.116782610051025)),
+            MarkerModel(id++, "GPS", "15.09.23", "15:30", GeoPoint(55.79715863892295, 49.0988111057205))
+        )
     }
 }
