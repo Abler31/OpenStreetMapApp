@@ -1,15 +1,11 @@
 package com.abler31.mapapp
 
-
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-
 
 class BottomSheetFragment(
     private val nameStr: String,
@@ -31,6 +27,5 @@ class BottomSheetFragment(
         track.text = trackStr
         date.text = dateStr
         time.text = timeStr
-
     }
 }

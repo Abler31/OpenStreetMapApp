@@ -1,10 +1,7 @@
 package com.abler31.mapapp
 
-import android.view.LayoutInflater
-import android.view.View
 import android.widget.TextView
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 
 class CustomInfoWindow(
