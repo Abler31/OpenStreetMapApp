@@ -65,6 +65,10 @@ class MainActivity : AppCompatActivity() {
         markerList.forEach {
             setMarker(it.name, it.track, it.date, it.time, it.geoPoint)
         }
+
+        markerList.forEachIndexed { index, markerModel ->
+
+        }
     }
 
     private fun setMarker(
@@ -77,13 +81,20 @@ class MainActivity : AppCompatActivity() {
         val marker = Marker(mMap)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, R.drawable.marker_icon)
-        marker.title = "Test Marker"
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        val customInfoWindow = CustomInfoWindow(R.layout.info_window_layout, mMap)
+        marker.infoWindow = customInfoWindow
+
+        //overlay для обработки нажатия вне info window
+        mMap.overlays.add(FullScreenOverlay(customInfoWindow))
+
         val bottomSheetFragment = BottomSheetFragment(name, track, date, time)
         marker.setOnMarkerClickListener { mark, mapView ->
             bottomSheetFragment.show(supportFragmentManager, "BottomSheetDialog")
+            marker.showInfoWindow()
             return@setOnMarkerClickListener true
         }
+
         mMap.overlays.add(marker)
         mMap.invalidate()
     }
