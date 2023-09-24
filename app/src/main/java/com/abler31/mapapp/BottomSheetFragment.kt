@@ -16,7 +16,7 @@ class BottomSheetFragment(
     private val trackStr: String,
     private val dateStr: String,
     private val timeStr: String,
-) : BottomSheetDialogFragment(R.layout.bottomsheet_fragment){
+) : BottomSheetDialogFragment(R.layout.bottomsheet_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

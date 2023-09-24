@@ -7,28 +7,24 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 
-class CustomInfoWindow(layoutResId: Int, mapView: MapView) : InfoWindow(layoutResId, mapView) {
+class CustomInfoWindow(
+    layoutResId: Int,
+    mapView: MapView,
+    private val nameStr: String,
+    private val trackStr: String,
+    private val timeStr: String
+) : InfoWindow(layoutResId, mapView) {
 
-    private val myView: View = LayoutInflater.from(mapView.context).inflate(layoutResId, null)
-    private val name: TextView = myView.findViewById(R.id.tv_window_name) // Replace with your TextView's ID
-    private val info: TextView = myView.findViewById(R.id.tv_window_info) // Replace with your TextView's ID
-
-    // Method to open the info window
-    fun openInfoWindow(marker: Marker) {
-        onOpen(marker)
-    }
+    val name: TextView =
+        mView.findViewById(R.id.tv_window_name)
+    val info: TextView =
+        mView.findViewById(R.id.tv_window_info)
 
     override fun onOpen(item: Any?) {
-        if (item is Marker) {
-            name.text = "Илья"
-            info.text = "GPS, 15:30"
-        }
+        name.text = nameStr
+        info.text = trackStr.plus(", ").plus(timeStr)
     }
 
-    override fun onClose() {
-        // Cleanup if needed
-    }
-
-
+    override fun onClose() {}
 
 }
