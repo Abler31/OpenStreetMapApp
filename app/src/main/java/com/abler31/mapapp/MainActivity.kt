@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +22,8 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 class MainActivity : AppCompatActivity() {
     lateinit var mMap: MapView
     lateinit var controller: IMapController
-    lateinit var markerList: List<MarkerModel>
+    lateinit var markerList: ArrayList<MarkerModel>
+    lateinit var myLocationOverlay: MyLocationNewOverlay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +32,10 @@ class MainActivity : AppCompatActivity() {
         val zoomPlusButton = findViewById<ImageButton>(R.id.btn_zoom_plus)
         val zoomMinusButton = findViewById<ImageButton>(R.id.btn_zoom_minus)
         val locationButton = findViewById<ImageButton>(R.id.btn_location)
+        val nextTrackerButton = findViewById<ImageButton>(R.id.btn_next_tracker)
 
         mMap = findViewById(R.id.osmmap)
         mMap.setTileSource(TileSourceFactory.MAPNIK)
-        mMap.mapCenter
         mMap.setMultiTouchControls(true)
         mMap.setBuiltInZoomControls(false);
         controller = mMap.controller
@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
         //текущая геолокация
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        getLocation()
+        getCurrentLocation()
         locationButton.setOnClickListener {
-            getLocation(true)
+            getCurrentLocation(true)
         }
 
         initMarkerList()
@@ -66,8 +66,13 @@ class MainActivity : AppCompatActivity() {
             setMarker(it.name, it.track, it.date, it.time, it.geoPoint)
         }
 
-        markerList.forEachIndexed { index, markerModel ->
-
+        //следующий трекер
+        var trackerSelector = 0
+        nextTrackerButton.setOnClickListener {
+            myLocationOverlay.disableFollowLocation()
+            if (trackerSelector == markerList.size) trackerSelector = 0
+            mMap.controller.animateTo(markerList[trackerSelector++].geoPoint)
+            mMap.controller.setZoom(15.5)
         }
     }
 
@@ -99,14 +104,14 @@ class MainActivity : AppCompatActivity() {
         mMap.invalidate()
     }
 
-    private fun getLocation(zoom: Boolean = false) {
+    private fun getCurrentLocation(zoom: Boolean = false) {
         val currentDraw =
             ResourcesCompat.getDrawable(resources, R.drawable.ic_my_tracker_46dp, null)
         var currentIcon: Bitmap? = null
         if (currentDraw is BitmapDrawable) {
             currentIcon = currentDraw.bitmap
         }
-        val myLocationOverlay = MyLocationNewOverlay(mMap)
+        myLocationOverlay = MyLocationNewOverlay(mMap)
         myLocationOverlay.enableFollowLocation()
         myLocationOverlay.setPersonIcon(currentIcon)
         myLocationOverlay.setDirectionIcon(currentIcon)
@@ -120,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMarkerList() {
         var id = 0
-        markerList = listOf(
+        markerList = arrayListOf(
             MarkerModel(
                 id++,
                 "Илья",
